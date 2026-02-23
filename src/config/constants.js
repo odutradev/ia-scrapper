@@ -1,0 +1,16 @@
+export const SUBMIT_BUTTON_XPATH = '::-p-xpath(//*[@id="root"]/div[2]/div/div/div/div[5]/div/div/div[3]//button[not(@disabled)])';
+export const EMAIL_INPUT_XPATH = '::-p-xpath(//*[@id="root"]/div[2]/div/div/div/div[5]/div/div/div[3]/div[1]/div/div[1]/div/div/div/input)';
+export const VERIFY_BUTTON_XPATH = '::-p-xpath(//*[@id="root"]/div/main/div/button)';
+export const VERIFY_URL_INDICATOR = '/auth/verify-request?email=';
+export const CODE_INPUT_SELECTOR = 'input[inputmode="numeric"]';
+export const USER_EMAIL = 'joao.vitornl@gmail.com';
+export const PERPLEXITY_URL = 'https://www.perplexity.ai/';
+export const NETWORK_IDLE_EVENT = 'networkidle2';
+export const SERVER_ERROR_STATUS = 500;
+export const BAD_REQUEST_STATUS = 400;
+export const HTTP_OK_STATUS = 200;
+export const VIEWPORT_HEIGHT = 720;
+export const VIEWPORT_WIDTH = 1280;
+export const TYPING_DELAY = 100;
+export const SERVER_PORT = 3000;
+export const CODE_LENGTH = 6;
