@@ -18,7 +18,15 @@
     "coverage",
     "coverage*.ts",
     "***.tsx",
-    "***.json",
     "**/*.md"
+  ],
+    "includePatterns": [
+    "**/*.ts",
+    "**/*.js",
+    "**/*.tsx",
+    "**/*.jsx",
+    "**/*.json",
+    "**/*.md",
+    "Dockerfile"
   ]
 }
