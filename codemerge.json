@@ -1,0 +1,24 @@
+{
+  "projectName": "gemini-scrapper",
+  "outputPath": "gemini-scrapper-merged.txt",
+  "port": 9876,
+  "useGitignore": true,
+  "onUpsertCommand": "npm run build",
+  "ignorePatterns": [
+    "node_modules",
+    "node_modules*.log",
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    "codemerge.json",
+    "merged-output.txt",
+    ".env",
+    ".env.*",
+    "**/.DS_Store",
+    "coverage",
+    "coverage*.ts",
+    "***.tsx",
+    "***.json",
+    "**/*.md"
+  ]
+}
