@@ -1,26 +1,21 @@
 {
-  "name": "gemini-scrapper",
+  "name": "perplexity-scraper",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/server.js",
+  "description": "Scraper automatizado para o Perplexity AI",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
-    "lint": "eslint \"src*.ts\""
+    "start": "node index.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.0",
-    "helmet": "^8.0.0",
-    "zod": "^3.23.8"
+    "express": "^4.21.2",
+    "puppeteer": "^22.0.0"
   },
-  "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.5.4",
-    "eslint": "^9.10.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.6.2"
-  }
+  "keywords": [
+    "scraper",
+    "puppeteer",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC"
 }
