@@ -13,6 +13,6 @@ router.get("/validate/control-access", controlAccess, (req, res) => {
     res.send(`Authorization as "${res.locals.projectID}"`).status(200);
 });
 
-router.use("/ia", [controlAccess], iaRouter);
+router.use("/ia", iaRouter);
 
 export default router;
