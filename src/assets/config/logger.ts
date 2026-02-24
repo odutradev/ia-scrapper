@@ -1,6 +1,6 @@
 const loggerConfig = {
     usePrefix: true,
-    prefix: '[PocketDB API]',
+    prefix: '[IA Scraper API]',
     prefixColor: 'magenta',
     info: {
         prefix: '(info)',
