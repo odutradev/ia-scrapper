@@ -37,7 +37,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        const launchOptions = IS_DOCKER ? { headless: true, defaultViewport: null, args: PUPPETEER_ARGS, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT } : { headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
+        const launchOptions = { headless: IS_DOCKER, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
         browserInstance = await puppeteer.launch(launchOptions);
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
