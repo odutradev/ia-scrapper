@@ -1,28 +1,5 @@
 FROM node:20-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-    xvfb \
-    xauth \
-    dbus \
-    dbus-x11 \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libcairo2 \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
 COPY package*.json ./
@@ -33,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["xvfb-run", "--auto-servernum", "npm", "start"]
+CMD ["npm", "start"]
