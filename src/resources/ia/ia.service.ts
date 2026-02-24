@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
-import defaultConfig from "@assets/config/default";
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
 import logger from "@utils/functions/logger";
 
 import type { Browser, Page } from "puppeteer";
@@ -16,7 +15,10 @@ export const executeLoginFlow = async (): Promise<boolean> => {
         try {
             logger.info("[executeLoginFlow] Aguardando modal de login");
             const signInButton = await pageInstance.waitForSelector(LOGIN_MODAL_SELECTOR, { visible: true, timeout: BUTTON_WAIT });
-            if (signInButton) await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, signInButton);
+            if (signInButton) {
+                await signInButton.click();
+                await new Promise(r => setTimeout(r, 1000));
+            }
         } catch {}
         logger.info("[executeLoginFlow] Aguardando input de email");
         const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_SELECTOR, { visible: true });
@@ -35,10 +37,15 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT });
+        browserInstance = await puppeteer.launch({ headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
+        await pageInstance.evaluateOnNewDocument(() => {
+            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+            Object.defineProperty(navigator, 'languages', { get: () => ['pt-BR', 'pt', 'en-US', 'en'] });
+        });
         await pageInstance.setUserAgent(USER_AGENT);
         await pageInstance.setExtraHTTPHeaders({ 'Accept-Language': ACCEPT_LANGUAGE });
         logger.info("[initializeScraper] Navegando para URL base");
@@ -68,7 +75,7 @@ export const processVerificationCode = async (code: string): Promise<boolean> =>
         await pageInstance.keyboard.type(code, { delay: TYPING_DELAY });
         try {
             const verifyButton = await pageInstance.waitForSelector(VERIFY_BUTTON_SELECTOR, { visible: true, timeout: BUTTON_WAIT });
-            if (verifyButton) await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, verifyButton);
+            if (verifyButton) await verifyButton.click();
         } catch {
             await pageInstance.keyboard.press(ENTER_KEY);
         }
@@ -86,7 +93,7 @@ export const enableAnonymousMode = async (): Promise<boolean> => {
     try {
         const button = await pageInstance.waitForSelector(ANONYMOUS_MODE_BUTTON_SELECTOR, { visible: true });
         if (!button) return false;
-        await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, button);
+        await button.click();
         logger.success("[enableAnonymousMode] Modo anonimo ativado");
         return true;
     } catch {
