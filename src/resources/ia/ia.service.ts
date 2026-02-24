@@ -35,7 +35,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS });
+        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
