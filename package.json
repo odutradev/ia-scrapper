@@ -1,6 +1,6 @@
 {
   "name": "perplexity-scraper",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Scraper automatizado para o Perplexity AI",
   "main": "dist/server.js",
   "type": "module",
