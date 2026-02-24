@@ -1,18 +1,38 @@
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+# Fase de construção (builder)
+# FROM node:18 AS builder
 
-FROM node:20-alpine
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV PORT=1000
+# WORKDIR /app
+
+# COPY package*.json tsconfig.json ./
+
+# RUN npm install
+
+# COPY . .
+
+# RUN npm run build
+
+FROM node:18-alpine
+
 WORKDIR /app
-RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
-COPY package*.json ./
-RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
+
+COPY package*.json tsconfig.json ./
+
+RUN npm install
+
+COPY . .
+
 EXPOSE 1000
-CMD ["npm", "start"]
+
+CMD ["npm", "run", "dev"]
+
+# As linhas abaixo são agora comentadas, pois não serão mais usadas:
+
+# Copiar os arquivos compilados da fase builder
+# COPY --from=builder /app/dist ./dist
+# COPY --from=builder /app/package*.json ./
+
+# Instalar apenas as dependências de produção
+# RUN npm install --only=production
+
+# Rodar o servidor compilado na fase final (não será utilizado agora)
+# CMD ["node", "dist/server.js"]
