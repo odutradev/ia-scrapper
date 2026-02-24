@@ -8,7 +8,8 @@
       "@utils/*": ["src/utils/*"],
       "@routes/*": ["src/routes/*"],
       "@assets/*": ["src/assets/*"],
-      "@resources/*": ["src/resources/*"]
+      "@resources/*": ["src/resources/*"],
+      "@middlewares/*": ["src/middlewares/*"]
     },
     "outDir": "./dist",
     "rootDir": ".",
