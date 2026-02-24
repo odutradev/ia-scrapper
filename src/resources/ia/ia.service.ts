@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE, IS_DOCKER } from "./ia.constants";
 import logger from "@utils/functions/logger";
 
 import type { Browser, Page } from "puppeteer";
@@ -37,7 +37,8 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        browserInstance = await puppeteer.launch({ headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT });
+        const launchOptions = IS_DOCKER ? { headless: true, defaultViewport: null, args: PUPPETEER_ARGS, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT } : { headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
+        browserInstance = await puppeteer.launch(launchOptions);
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
@@ -63,10 +64,7 @@ export const processVerificationCode = async (code: string): Promise<boolean> =>
     logger.info("[processVerificationCode] Iniciando processamento do codigo de verificacao");
     if (!pageInstance) return false;
     try {
-        if (!pageInstance.url().includes(VERIFY_URL_INDICATOR)) {
-            logger.warning("[processVerificationCode] URL fora do padrao de verificacao");
-            return false;
-        }
+        if (!pageInstance.url().includes(VERIFY_URL_INDICATOR)) return false;
         logger.info("[processVerificationCode] Aguardando input do codigo");
         const firstCodeInput = await pageInstance.waitForSelector(CODE_INPUT_SELECTOR, { visible: true });
         if (!firstCodeInput) return false;

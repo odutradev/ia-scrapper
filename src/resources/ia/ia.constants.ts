@@ -5,6 +5,7 @@ export const VIEWPORT_WIDTH = 1280;
 export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-blink-features=AutomationControlled', '--disable-infobars', '--window-position=0,0', `--window-size=${VIEWPORT_WIDTH},${VIEWPORT_HEIGHT}`, '--ignore-certificate-errors', '--ignore-certificate-errors-spki-list'];
 export const ANONYMOUS_MODE_BUTTON_SELECTOR = 'button[aria-label^="Use o modo anônimo"]';
 export const STOP_BUTTON_SELECTOR = 'button[aria-label="Interromper resposta (Esc)"]';
+export const IS_DOCKER = process.env.RUNNING_IN_DOCKER === 'true';
 export const LOGIN_MODAL_SELECTOR = '::-p-text(Sign in), ::-p-text(Log in)';
 export const ACCEPT_LANGUAGE = 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7';
 export const VERIFY_URL_INDICATOR = '/auth/verify-request?email=';

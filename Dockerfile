@@ -1,13 +1,13 @@
-FROM node:20-slim
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+FROM ghcr.io/puppeteer/puppeteer:22.0.0
+ENV RUNNING_IN_DOCKER=true
 ENV PORT=1000
-ENV DISPLAY=:99
-RUN apt-get update && apt-get install -y chromium xvfb --no-install-recommends && rm -rf /var/lib/apt/lists/*
+USER root
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
+RUN chown -R pptruser:pptruser /app
+USER pptruser
 EXPOSE 1000
-CMD ["xvfb-run", "--server-args=-screen 0 1280x720x24", "npm", "start"]
+CMD ["npm", "start"]
