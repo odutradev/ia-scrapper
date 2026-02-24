@@ -1,55 +1,93 @@
 import puppeteer from "puppeteer";
 
 import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_URL_INDICATOR, SUBMIT_BUTTON_XPATH, VERIFY_BUTTON_XPATH, EMAIL_INPUT_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG } from "./ia.constants";
+import defaultConfig from "@assets/config/default";
+import logger from "@utils/functions/logger";
 
 import type { Browser, Page } from "puppeteer";
 
-import defaultConfig from "@assets/config/default";
 let browserInstance: Browser | null = null;
 let pageInstance: Page | null = null;
 
 export const executeLoginFlow = async (): Promise<boolean> => {
-    if (!pageInstance) return false;
+    if (!pageInstance) {
+        logger.error("[executeLoginFlow] pageInstance is null");
+        return false;
+    }
     try {
+        logger.info("[executeLoginFlow] Iniciando fluxo de login...");
         const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_XPATH, { visible: true });
-        if (!emailInput) return false;
+        if (!emailInput) {
+            logger.error("[executeLoginFlow] Campo de email não encontrado");
+            return false;
+        }
+        logger.info(`[executeLoginFlow] Preenchendo email: ${USER_EMAIL}`);
         await emailInput.type(USER_EMAIL, { delay: TYPING_DELAY });
         const submitButton = await pageInstance.waitForSelector(SUBMIT_BUTTON_XPATH, { visible: true });
-        if (!submitButton) return false;
+        if (!submitButton) {
+            logger.error("[executeLoginFlow] Botão de submit não encontrado");
+            return false;
+        }
+        logger.info("[executeLoginFlow] Clicando no botão de submit...");
         await submitButton.click();
+        logger.success("[executeLoginFlow] Fluxo de login finalizado (aguardando email com código)");
         return true;
-    } catch {
+    } catch (error) {
+        logger.error(`[executeLoginFlow] Falha durante o fluxo de login: ${error}`);
         return false;
     }
 };
 
 export const initializeScraper = async (): Promise<void> => {
     try {
+        logger.info("[initializeScraper] Iniciando browser...");
         browserInstance = await puppeteer.launch({ headless: defaultConfig.mode == "production" ? true : false, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT } });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
+        logger.info("[initializeScraper] Navegando para PERPLEXITY_URL...");
         await pageInstance.goto(PERPLEXITY_URL, { waitUntil: NETWORK_IDLE_EVENT });
         const isLoginStarted = await executeLoginFlow();
-        if (!isLoginStarted) await browserInstance.close();
-    } catch {
+        if (!isLoginStarted) {
+            logger.error("[initializeScraper] Falha ao iniciar fluxo de login, fechando browser...");
+            await browserInstance.close();
+        }
+    } catch (error) {
+        logger.error(`[initializeScraper] Erro crítico na inicialização: ${error}`);
         process.exit(1);
     }
 };
 
 export const processVerificationCode = async (code: string): Promise<boolean> => {
-    if (!pageInstance) return false;
+    if (!pageInstance) {
+        logger.error("[processVerificationCode] pageInstance is null");
+        return false;
+    }
     try {
-        if (!pageInstance.url().includes(VERIFY_URL_INDICATOR)) return false;
+        logger.info(`[processVerificationCode] Iniciando verificação com código: ${code}`);
+        if (!pageInstance.url().includes(VERIFY_URL_INDICATOR)) {
+            logger.warning(`[processVerificationCode] URL não contém indicador de verificação. URL atual: ${pageInstance.url()}`);
+            return false;
+        }
         const firstCodeInput = await pageInstance.waitForSelector(CODE_INPUT_SELECTOR, { visible: true });
-        if (!firstCodeInput) return false;
+        if (!firstCodeInput) {
+            logger.error("[processVerificationCode] Input de código não encontrado");
+            return false;
+        }
+        logger.info("[processVerificationCode] Focando e digitando o código...");
         await firstCodeInput.focus();
         await pageInstance.keyboard.type(code, { delay: TYPING_DELAY });
         const verifyButton = await pageInstance.waitForSelector(VERIFY_BUTTON_XPATH, { visible: true });
-        if (!verifyButton) return false;
+        if (!verifyButton) {
+            logger.error("[processVerificationCode] Botão de verificação não encontrado");
+            return false;
+        }
+        logger.info("[processVerificationCode] Clicando no botão de verificação...");
         await verifyButton.click();
+        logger.success("[processVerificationCode] Código de verificação processado com sucesso");
         return true;
-    } catch {
+    } catch (error) {
+        logger.error(`[processVerificationCode] Falha ao processar código: ${error}`);
         return false;
     }
 };
