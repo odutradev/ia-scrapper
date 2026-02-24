@@ -7,7 +7,7 @@ ENV PORT=1000
 USER root
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
 COPY . .
 RUN npm run build
 RUN chown -R myuser:myuser /app
