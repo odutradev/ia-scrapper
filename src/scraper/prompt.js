@@ -1,4 +1,4 @@
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, GENERATION_TIMEOUT, ASK_INPUT_SELECTOR, CLIPBOARD_DELAY, BUTTON_WAIT, TYPING_DELAY, ENTER_KEY, DIV_TAG } from '../config/constants.js';
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, GENERATION_TIMEOUT, ASK_INPUT_SELECTOR, NETWORK_IDLE_EVENT, PERPLEXITY_URL, CLIPBOARD_DELAY, BUTTON_WAIT, TYPING_DELAY, ENTER_KEY, DIV_TAG } from '../config/constants.js';
 
 export const enableAnonymousMode = async (page) => {
   try {
@@ -40,6 +40,15 @@ export const sendPromptToAI = async (page, prompt) => {
     await input.focus();
     await page.keyboard.type(prompt, { delay: TYPING_DELAY });
     await page.keyboard.press(ENTER_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const resetPage = async (page) => {
+  try {
+    await page.goto(PERPLEXITY_URL, { waitUntil: NETWORK_IDLE_EVENT });
     return true;
   } catch {
     return false;
