@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE, IS_DOCKER } from "./ia.constants";
+import { ACCEPT_LANGUAGE, ANONYMOUS_MODE_BUTTON_SELECTOR, ASK_INPUT_SELECTOR, BUTTON_WAIT, CLIPBOARD_DELAY, CLIPBOARD_READ, CLIPBOARD_WRITE, CODE_INPUT_SELECTOR, COPY_BUTTON_SELECTOR, DIV_TAG, EMAIL_INPUT_SELECTOR, ENTER_KEY, GENERATION_TIMEOUT, IS_DOCKER, LOGIN_MODAL_SELECTOR, NETWORK_IDLE_EVENT, PERPLEXITY_URL, PROTOCOL_TIMEOUT, PUPPETEER_ARGS, RESPONSES_CONTAINER_XPATH, STOP_BUTTON_SELECTOR, TYPING_DELAY, USER_AGENT, USER_EMAIL, VERIFY_BUTTON_SELECTOR, VERIFY_URL_INDICATOR, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "./ia.constants";
 import logger from "@utils/functions/logger";
 
 import type { Browser, Page } from "puppeteer";
@@ -14,14 +14,14 @@ export const executeLoginFlow = async (): Promise<boolean> => {
     try {
         try {
             logger.info("[executeLoginFlow] Aguardando modal de login");
-            const signInButton = await pageInstance.waitForSelector(LOGIN_MODAL_SELECTOR, { visible: true, timeout: BUTTON_WAIT });
+            const signInButton = await pageInstance.waitForSelector(LOGIN_MODAL_SELECTOR, { visible: true, timeout: BUTTON_WAIT * 2 });
             if (signInButton) {
                 await signInButton.click();
-                await new Promise(r => setTimeout(r, 1000));
+                await new Promise(r => setTimeout(r, BUTTON_WAIT));
             }
         } catch {}
         logger.info("[executeLoginFlow] Aguardando input de email");
-        const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_SELECTOR, { visible: true });
+        const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_SELECTOR, { visible: true, timeout: PROTOCOL_TIMEOUT });
         if (!emailInput) return false;
         logger.info("[executeLoginFlow] Inserindo email");
         await emailInput.type(USER_EMAIL, { delay: TYPING_DELAY });
@@ -37,7 +37,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        const launchOptions = { headless: IS_DOCKER, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
+        const launchOptions = { headless: IS_DOCKER, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
         browserInstance = await puppeteer.launch(launchOptions);
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
@@ -159,3 +159,4 @@ export const resetPage = async (): Promise<boolean> => {
         return false;
     }
 };
+
