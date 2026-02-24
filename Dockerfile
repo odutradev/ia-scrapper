@@ -13,5 +13,4 @@ RUN npm run build
 RUN chown -R myuser:myuser /app
 USER myuser
 EXPOSE 1000
-ENTRYPOINT []
-CMD ["xvfb-run", "--server-args=-screen 0 1280x720x24", "npm", "run", "start"]
+CMD ["npm", "run", "start"]
