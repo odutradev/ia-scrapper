@@ -9,7 +9,6 @@ interface DefaultConfig {
     data: boolean;
   };
   logCronsStats: boolean;
-  clusterName?: string;
 }
 
 const production = process.env.PRODUCTION === 'true';
