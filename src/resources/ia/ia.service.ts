@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, PROTOCOL_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
 
@@ -35,7 +35,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH });
+        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();

@@ -1,6 +1,6 @@
 export const RESPONSES_CONTAINER_XPATH = '//*[@id="root"]/div[1]/div/div/div[2]/div/div[1]/div/div[3]/div/div[1]/div[1]/div';
 export const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
-export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled', '--disable-infobars', '--window-position=0,0', '--ignore-certifcate-errors', '--ignore-certifcate-errors-spki-list'];
+export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-blink-features=AutomationControlled', '--disable-infobars', '--window-position=0,0', '--ignore-certificate-errors', '--ignore-certificate-errors-spki-list'];
 export const ANONYMOUS_MODE_BUTTON_SELECTOR = 'button[aria-label^="Use o modo anônimo"]';
 export const STOP_BUTTON_SELECTOR = 'button[aria-label="Interromper resposta (Esc)"]';
 export const LOGIN_MODAL_SELECTOR = '::-p-text(Sign in), ::-p-text(Log in)';
@@ -16,6 +16,7 @@ export const NETWORK_IDLE_EVENT = 'networkidle2' as const;
 export const CLIPBOARD_WRITE = 'clipboard-write' as const;
 export const CLIPBOARD_READ = 'clipboard-read' as const;
 export const USER_EMAIL = process.env.EMAIL ?? '';
+export const PROTOCOL_TIMEOUT = 180000;
 export const GENERATION_TIMEOUT = 60000;
 export const VIEWPORT_HEIGHT = 720;
 export const VIEWPORT_WIDTH = 1280;
