@@ -5,6 +5,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     xvfb \
     xauth \
+    dbus \
+    dbus-x11 \
     libnss3 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
@@ -31,4 +33,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npm", "start"]
+CMD ["xvfb-run", "--auto-servernum", "npm", "start"]
