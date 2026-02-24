@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS } from "./ia.constants";
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_BUTTON_SELECTOR, LOGIN_MODAL_SELECTOR, EMAIL_INPUT_SELECTOR, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, VERIFY_URL_INDICATOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS, USER_AGENT, ACCEPT_LANGUAGE } from "./ia.constants";
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
 
@@ -14,7 +14,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
     try {
         try {
             const signInButton = await pageInstance.waitForSelector(LOGIN_MODAL_SELECTOR, { visible: true, timeout: BUTTON_WAIT });
-            if (signInButton) await signInButton.click();
+            if (signInButton) await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, signInButton);
         } catch {}
         const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_SELECTOR, { visible: true });
         if (!emailInput) return false;
@@ -33,6 +33,8 @@ export const initializeScraper = async (): Promise<void> => {
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
+        await pageInstance.setUserAgent(USER_AGENT);
+        await pageInstance.setExtraHTTPHeaders({ 'Accept-Language': ACCEPT_LANGUAGE });
         await pageInstance.goto(PERPLEXITY_URL, { waitUntil: NETWORK_IDLE_EVENT });
         const isLoginStarted = await executeLoginFlow();
         if (!isLoginStarted) await browserInstance.close();
@@ -52,7 +54,7 @@ export const processVerificationCode = async (code: string): Promise<boolean> =>
         await pageInstance.keyboard.type(code, { delay: TYPING_DELAY });
         try {
             const verifyButton = await pageInstance.waitForSelector(VERIFY_BUTTON_SELECTOR, { visible: true, timeout: BUTTON_WAIT });
-            if (verifyButton) await verifyButton.click();
+            if (verifyButton) await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, verifyButton);
         } catch {
             await pageInstance.keyboard.press(ENTER_KEY);
         }
@@ -68,7 +70,7 @@ export const enableAnonymousMode = async (): Promise<boolean> => {
     try {
         const button = await pageInstance.waitForSelector(ANONYMOUS_MODE_BUTTON_SELECTOR, { visible: true });
         if (!button) return false;
-        await button.click();
+        await pageInstance.evaluate((btn) => { if (btn instanceof HTMLElement) btn.click() }, button);
         return true;
     } catch {
         return false;
