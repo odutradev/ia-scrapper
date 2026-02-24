@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import controlAccess from "@middlewares/controlAccess";
-// import kvRouter from "./resources/kv.router";
+import iaRouter from "./resources/ia.router";
 
 const router = Router();
 
@@ -13,7 +13,6 @@ router.get("/validate/control-access", controlAccess, (req, res) => {
     res.send(`Authorization as "${res.locals.projectID}"`).status(200);
 });
 
-
-// router.use("/kv", [controlAccess],  kvRouter);
+router.use("/ia", [controlAccess], iaRouter);
 
 export default router;

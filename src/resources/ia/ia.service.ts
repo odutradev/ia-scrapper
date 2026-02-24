@@ -1,0 +1,113 @@
+import puppeteer from "puppeteer";
+
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_URL_INDICATOR, SUBMIT_BUTTON_XPATH, VERIFY_BUTTON_XPATH, EMAIL_INPUT_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG } from "./ia.constants";
+
+import type { Browser, Page } from "puppeteer";
+
+let browserInstance: Browser | null = null;
+let pageInstance: Page | null = null;
+
+export const executeLoginFlow = async (): Promise<boolean> => {
+    if (!pageInstance) return false;
+    try {
+        const emailInput = await pageInstance.waitForSelector(EMAIL_INPUT_XPATH, { visible: true });
+        if (!emailInput) return false;
+        await emailInput.type(USER_EMAIL, { delay: TYPING_DELAY });
+        const submitButton = await pageInstance.waitForSelector(SUBMIT_BUTTON_XPATH, { visible: true });
+        if (!submitButton) return false;
+        await submitButton.click();
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export const initializeScraper = async (): Promise<void> => {
+    try {
+        browserInstance = await puppeteer.launch({ headless: false, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT } });
+        const context = browserInstance.defaultBrowserContext();
+        await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
+        pageInstance = await browserInstance.newPage();
+        await pageInstance.goto(PERPLEXITY_URL, { waitUntil: NETWORK_IDLE_EVENT });
+        const isLoginStarted = await executeLoginFlow();
+        if (!isLoginStarted) await browserInstance.close();
+    } catch {
+        process.exit(1);
+    }
+};
+
+export const processVerificationCode = async (code: string): Promise<boolean> => {
+    if (!pageInstance) return false;
+    try {
+        if (!pageInstance.url().includes(VERIFY_URL_INDICATOR)) return false;
+        const firstCodeInput = await pageInstance.waitForSelector(CODE_INPUT_SELECTOR, { visible: true });
+        if (!firstCodeInput) return false;
+        await firstCodeInput.focus();
+        await pageInstance.keyboard.type(code, { delay: TYPING_DELAY });
+        const verifyButton = await pageInstance.waitForSelector(VERIFY_BUTTON_XPATH, { visible: true });
+        if (!verifyButton) return false;
+        await verifyButton.click();
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export const enableAnonymousMode = async (): Promise<boolean> => {
+    if (!pageInstance) return false;
+    try {
+        const button = await pageInstance.waitForSelector(ANONYMOUS_MODE_BUTTON_SELECTOR, { visible: true });
+        if (!button) return false;
+        await button.click();
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export const getAIResponseText = async (): Promise<string | null> => {
+    if (!pageInstance) return null;
+    try {
+        await pageInstance.waitForSelector(STOP_BUTTON_SELECTOR, { visible: true, timeout: BUTTON_WAIT }).catch(() => {});
+        await pageInstance.waitForSelector(STOP_BUTTON_SELECTOR, { hidden: true, timeout: GENERATION_TIMEOUT });
+        return await pageInstance.evaluate(async (xpath: string, copySelector: string, delay: number, tag: string) => {
+            const iterator = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            const container = iterator.singleNodeValue as Element | null;
+            if (!container) return null;
+            const divs = Array.from(container.children).filter(element => element.tagName === tag);
+            const lastDiv = divs[divs.length - 1];
+            if (!lastDiv) return null;
+            const copyBtn = lastDiv.querySelector(copySelector) as HTMLButtonElement | null;
+            if (!copyBtn) return null;
+            copyBtn.click();
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return await navigator.clipboard.readText();
+        }, RESPONSES_CONTAINER_XPATH, COPY_BUTTON_SELECTOR, CLIPBOARD_DELAY, DIV_TAG);
+    } catch {
+        return null;
+    }
+};
+
+export const sendPromptToAI = async (prompt: string): Promise<boolean> => {
+    if (!pageInstance) return false;
+    try {
+        const input = await pageInstance.waitForSelector(ASK_INPUT_SELECTOR, { visible: true });
+        if (!input) return false;
+        await input.focus();
+        await pageInstance.keyboard.type(prompt, { delay: TYPING_DELAY });
+        await pageInstance.keyboard.press(ENTER_KEY);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export const resetPage = async (): Promise<boolean> => {
+    if (!pageInstance) return false;
+    try {
+        await pageInstance.goto(PERPLEXITY_URL, { waitUntil: NETWORK_IDLE_EVENT });
+        return true;
+    } catch {
+        return false;
+    }
+};
