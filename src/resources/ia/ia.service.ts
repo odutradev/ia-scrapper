@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_URL_INDICATOR, SUBMIT_BUTTON_XPATH, VERIFY_BUTTON_XPATH, EMAIL_INPUT_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG } from "./ia.constants";
+import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_URL_INDICATOR, SUBMIT_BUTTON_XPATH, VERIFY_BUTTON_XPATH, EMAIL_INPUT_XPATH, STOP_BUTTON_SELECTOR, COPY_BUTTON_SELECTOR, CODE_INPUT_SELECTOR, ASK_INPUT_SELECTOR, NETWORK_IDLE_EVENT, GENERATION_TIMEOUT, CLIPBOARD_WRITE, CLIPBOARD_READ, PERPLEXITY_URL, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, CLIPBOARD_DELAY, TYPING_DELAY, BUTTON_WAIT, USER_EMAIL, ENTER_KEY, DIV_TAG, PUPPETEER_ARGS } from "./ia.constants";
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
 
@@ -41,7 +41,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     try {
         logger.info("[initializeScraper] Iniciando browser...");
-        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode == "production" ? true : false, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT } });
+        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode === "production", defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, args: PUPPETEER_ARGS });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();

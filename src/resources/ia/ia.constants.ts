@@ -6,6 +6,7 @@ export const STOP_BUTTON_SELECTOR = 'button[aria-label="Interromper resposta (Es
 export const VERIFY_URL_INDICATOR = '/auth/verify-request?email=';
 export const COPY_BUTTON_SELECTOR = 'button[aria-label="Copiar"]';
 export const VERIFY_BUTTON_XPATH = '::-p-xpath(//*[@id="root"]/div/main/div/button)';
+export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox'];
 export const CODE_INPUT_SELECTOR = 'input[inputmode="numeric"]';
 export const PERPLEXITY_URL = 'https://www.perplexity.ai/';
 export const ASK_INPUT_SELECTOR = '#ask-input';
