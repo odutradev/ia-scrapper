@@ -1,9 +1,9 @@
 import puppeteer from 'puppeteer';
 import 'dotenv/config';
 
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH, NETWORK_IDLE_EVENT, PERPLEXITY_URL, CLIPBOARD_WRITE, CLIPBOARD_READ } from './src/config/constants';
-import { initializeVerificationServer } from './src/server/index';
-import { executeLoginFlow } from './src/scraper/auth';
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH, NETWORK_IDLE_EVENT, PERPLEXITY_URL, CLIPBOARD_WRITE, CLIPBOARD_READ } from './old-scraper/config/constants';
+import { initializeVerificationServer } from './old-scraper/server/index';
+import { executeLoginFlow } from './old-scraper/scraper/auth';
 
 const initializeScraper = async (): Promise<void> => {
   try {

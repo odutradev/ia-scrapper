@@ -18,6 +18,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "index.ts"],
+  "include": ["src/**/*", "old-scraper/scraper", "old-scraper/config", "old-scraper/server", "old-scraper/ui"],
   "exclude": ["node_modules", "dist"]
 }
