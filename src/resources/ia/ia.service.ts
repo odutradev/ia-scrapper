@@ -4,6 +4,7 @@ import { ANONYMOUS_MODE_BUTTON_SELECTOR, RESPONSES_CONTAINER_XPATH, VERIFY_URL_I
 
 import type { Browser, Page } from "puppeteer";
 
+import defaultConfig from "@assets/config/default";
 let browserInstance: Browser | null = null;
 let pageInstance: Page | null = null;
 
@@ -24,7 +25,7 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 
 export const initializeScraper = async (): Promise<void> => {
     try {
-        browserInstance = await puppeteer.launch({ headless: false, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT } });
+        browserInstance = await puppeteer.launch({ headless: defaultConfig.mode == "production" ? true : false, defaultViewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT } });
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
