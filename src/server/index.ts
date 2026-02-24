@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { SERVER_ERROR_STATUS, BAD_REQUEST_STATUS, HTTP_OK_STATUS, SERVER_PORT, CODE_LENGTH } from '../config/constants.js';
-import { sendPromptToAI, enableAnonymousMode, getAIResponseText, resetPage } from '../scraper/prompt.js';
-import { processVerificationCode } from '../scraper/auth.js';
-import { HTML_UI } from '../ui/template.js';
+import { SERVER_ERROR_STATUS, BAD_REQUEST_STATUS, HTTP_OK_STATUS, SERVER_PORT, CODE_LENGTH } from '../config/constants';
+import { sendPromptToAI, enableAnonymousMode, getAIResponseText, resetPage } from '../scraper/prompt';
+import { processVerificationCode } from '../scraper/auth';
+import { HTML_UI } from '../ui/template';
 
 import type { Request, Response } from 'express';
 import type { Page } from 'puppeteer';

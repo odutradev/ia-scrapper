@@ -3,7 +3,7 @@
   "outputPath": "gemini-scrapper-merged.txt",
   "port": 9876,
   "useGitignore": true,
-  "onUpsertCommand": "npm run build",
+  "onUpsertCommand": "",
   "ignorePatterns": [
     "node_modules",
     "node_modules*.log",
