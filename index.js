@@ -1,4 +1,6 @@
 import puppeteer from 'puppeteer';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH, NETWORK_IDLE_EVENT, PERPLEXITY_URL } from './src/config/constants.js';
 import { initializeVerificationServer } from './src/server/index.js';

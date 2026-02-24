@@ -4,7 +4,7 @@ export const ANONYMOUS_MODE_BUTTON_SELECTOR = 'button[aria-label^="Use o modo an
 export const VERIFY_BUTTON_XPATH = '::-p-xpath(//*[@id="root"]/div/main/div/button)';
 export const VERIFY_URL_INDICATOR = '/auth/verify-request?email=';
 export const CODE_INPUT_SELECTOR = 'input[inputmode="numeric"]';
-export const USER_EMAIL = 'joao.vitornl@gmail.com';
+export const USER_EMAIL = process.env.EMAIL;
 export const PERPLEXITY_URL = 'https://www.perplexity.ai/';
 export const ASK_INPUT_SELECTOR = '#ask-input';
 export const NETWORK_IDLE_EVENT = 'networkidle2';
