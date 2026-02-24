@@ -1,7 +1,7 @@
 export const RESPONSES_CONTAINER_XPATH = '//*[@id="root"]/div[1]/div/div/div[2]/div/div[1]/div/div[3]/div/div[1]/div[1]/div';
 export const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
-export const VIEWPORT_HEIGHT = 720;
-export const VIEWPORT_WIDTH = 1280;
+export const VIEWPORT_HEIGHT = 1080;
+export const VIEWPORT_WIDTH = 1920;
 export const PUPPETEER_ARGS = ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-blink-features=AutomationControlled', '--disable-infobars', '--window-position=0,0', `--window-size=${VIEWPORT_WIDTH},${VIEWPORT_HEIGHT}`, '--ignore-certificate-errors', '--ignore-certificate-errors-spki-list'];
 export const ANONYMOUS_MODE_BUTTON_SELECTOR = 'button[aria-label^="Use o modo anônimo"]';
 export const STOP_BUTTON_SELECTOR = 'button[aria-label="Interromper resposta (Esc)"]';
