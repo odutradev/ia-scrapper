@@ -5,18 +5,11 @@
     "moduleResolution": "Bundler",
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@routes/*": ["src/routes/*"],
       "@assets/*": ["src/assets/*"],
+      "@middlewares/*": ["src/middlewares/*"],
       "@resources/*": ["src/resources/*"],
-      "@middlewares/*": ["src/middlewares/*"]
-    },
-    "outDir": "./dist",
-    "rootDir": ".",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
+      "@utils/*": ["src/utils/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

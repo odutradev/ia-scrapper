@@ -6,7 +6,7 @@ export const STOP_BUTTON_SELECTOR = 'button[aria-label="Interromper resposta (Es
 export const LOGIN_MODAL_SELECTOR = '::-p-text(Sign in), ::-p-text(Log in)';
 export const ACCEPT_LANGUAGE = 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7';
 export const VERIFY_URL_INDICATOR = '/auth/verify-request?email=';
-export const RESPONSES_CONTAINER_XPATH = '
+export const RESPONSES_CONTAINER_XPATH = '//div[@dir="auto"]';
 export const EMAIL_INPUT_SELECTOR = 'input[type="email"]';
 export const COPY_BUTTON_SELECTOR = 'button[aria-label="Copiar"]';
 export const VERIFY_BUTTON_SELECTOR = 'button[type="submit"]';
