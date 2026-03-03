@@ -1,17 +1,16 @@
-FROM apify/actor-node-puppeteer-chrome:20
-ENV RUNNING_IN_DOCKER=true
+FROM node:20-alpine AS builder
 ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-ENV PORT=1000
-ENV XVFB_WHD="1920x1080x24"
-USER root
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --include=dev
+RUN npm install
 COPY . .
 RUN npm run build
-RUN chown -R myuser:myuser /app
-USER myuser
+
+FROM node:20-alpine
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+COPY --from=builder /app/dist ./dist
 EXPOSE 1000
 CMD ["npm", "run", "start"]

@@ -1,0 +1,29 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: perplexity_api
+    environment:
+      - PORT=1000
+      - BROWSER_WS_ENDPOINT=ws://chromium:3000
+      - EMAIL=${EMAIL}
+      - PRIVATE_ACCESS_TOKEN=${PRIVATE_ACCESS_TOKEN}
+      - PUBLIC_ACCESS_TOKEN=${PUBLIC_ACCESS_TOKEN}
+    ports:
+      - "1000:1000"
+    depends_on:
+      - chromium
+    restart: unless-stopped
+
+  chromium:
+    image: browserless/chrome:latest
+    container_name: chromium
+    environment:
+      - TZ=America/Sao_Paulo
+      - CONNECTION_TIMEOUT=600000
+      - MAX_CONCURRENT_SESSIONS=5
+    ports:
+      - "3001:3000"
+    shm_size: "1gb"
+    restart: unless-stopped

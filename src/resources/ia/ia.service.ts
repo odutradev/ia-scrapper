@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-import { ACCEPT_LANGUAGE, ANONYMOUS_MODE_BUTTON_SELECTOR, ASK_INPUT_SELECTOR, BUTTON_WAIT, CLIPBOARD_DELAY, CLIPBOARD_READ, CLIPBOARD_WRITE, CODE_INPUT_SELECTOR, COPY_BUTTON_SELECTOR, DIV_TAG, EMAIL_INPUT_SELECTOR, ENTER_KEY, GENERATION_TIMEOUT, LOGIN_MODAL_SELECTOR, NETWORK_IDLE_EVENT, PERPLEXITY_URL, PROTOCOL_TIMEOUT, PUPPETEER_ARGS, RESPONSES_CONTAINER_XPATH, STOP_BUTTON_SELECTOR, TYPING_DELAY, USER_AGENT, USER_EMAIL, VERIFY_BUTTON_SELECTOR, VERIFY_URL_INDICATOR } from "./ia.constants";
+import { ACCEPT_LANGUAGE, ANONYMOUS_MODE_BUTTON_SELECTOR, ASK_INPUT_SELECTOR, BROWSER_WS_ENDPOINT, BUTTON_WAIT, CLIPBOARD_DELAY, CLIPBOARD_READ, CLIPBOARD_WRITE, CODE_INPUT_SELECTOR, COPY_BUTTON_SELECTOR, DIV_TAG, EMAIL_INPUT_SELECTOR, ENTER_KEY, GENERATION_TIMEOUT, LOGIN_MODAL_SELECTOR, NETWORK_IDLE_EVENT, PERPLEXITY_URL, PROTOCOL_TIMEOUT, PUPPETEER_ARGS, RESPONSES_CONTAINER_XPATH, STOP_BUTTON_SELECTOR, TYPING_DELAY, USER_AGENT, USER_EMAIL, VERIFY_BUTTON_SELECTOR, VERIFY_URL_INDICATOR } from "./ia.constants";
 import logger from "@utils/functions/logger";
 
 import type { Browser, Page } from "puppeteer";
@@ -37,8 +37,14 @@ export const executeLoginFlow = async (): Promise<boolean> => {
 export const initializeScraper = async (): Promise<void> => {
     logger.info("[initializeScraper] Iniciando scraper");
     try {
-        const launchOptions = { headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT };
-        browserInstance = await puppeteer.launch(launchOptions);
+        if (BROWSER_WS_ENDPOINT) {
+            logger.info(`[initializeScraper] Conectando ao browser remoto: ${BROWSER_WS_ENDPOINT}`);
+            browserInstance = await puppeteer.connect({ browserWSEndpoint: BROWSER_WS_ENDPOINT, defaultViewport: null });
+        } else {
+            logger.info("[initializeScraper] Iniciando browser local");
+            browserInstance = await puppeteer.launch({ headless: false, defaultViewport: null, args: PUPPETEER_ARGS, executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, timeout: PROTOCOL_TIMEOUT, protocolTimeout: PROTOCOL_TIMEOUT });
+        }
+
         const context = browserInstance.defaultBrowserContext();
         await context.overridePermissions(PERPLEXITY_URL, [CLIPBOARD_READ, CLIPBOARD_WRITE]);
         pageInstance = await browserInstance.newPage();
